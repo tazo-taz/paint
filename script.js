@@ -5,14 +5,14 @@ var color = 'red'
 var canvasNames
 var opened = false
 var deleteEnable = false
-x = localStorage.getItem('canvasNames')
-console.log(x)
+var x = localStorage.getItem('canvasNames')
+var startenable = true
+
 if (x) {
     canvasNames = JSON.parse(x)
 } else {
     canvasNames = []
 }
-console.log(canvasNames)
 var data = { name: '', datas: [] }
 function draw(e) {
     data['datas'].push({ "color": color, "posX": e.offsetX, "posY": e.offsetY })
@@ -54,7 +54,6 @@ $('.save').click(function () {
         if (!($('.dataname').val())) return
         localStorage.setItem($('.dataname').val(), `[${String(data['datas'].map(a => JSON.stringify(a)))}]`)
         canvasNames.push($('.dataname').val())
-        console.log(JSON.stringify(canvasNames.map(a => `${a}`)))
         localStorage.setItem('canvasNames', JSON.stringify(canvasNames.map(a => `${a}`)))
         $('.oncancel').click()
     })
@@ -79,14 +78,12 @@ $('.open').click(function () {
 })
 function activateClearClick() {
     $('.clear').click(function () {
-        console.log(deleteEnable)
         if (deleteEnable) {
             value = $('select').val()
             if (value != 'first') {
                 canvasNames = canvasNames.filter(a => a != value)
                 localStorage.removeItem(value)
                 localStorage.setItem('canvasNames', JSON.stringify(canvasNames))
-                console.log(value)
                 getOptions()
                 ctx.clearRect(0, 0, c.width, c.height)
             }
@@ -97,41 +94,43 @@ function activateClearClick() {
     })
 }
 function getOptions() {
-    console.log('options')
     selectHTML = '<select class="custom-select col-9"><option selected value="first">Search Paints</option>'
-    console.log(canvasNames)
     if (canvasNames.length != 0) {
         for (k of canvasNames) {
-            console.log(k, canvasNames)
             selectHTML += `<option value="${k}">${k}</option>`
         }
     }
     selectHTML += '</select>'
     $('.clear').siblings().remove()
     $(selectHTML).insertAfter('.clear')
-    console.log(selectHTML,$('.clear'),$(selectHTML))
     $(selectHTML).val('first')
     if(deleteEnable){
         $('select').css('visibility','visible')
     }
     $('select').change(function () {
+        if(!startenable)return
         arr = JSON.parse(localStorage.getItem($(this).val()))
-        console.log(selectHTML, arr)
         drawOption(arr)
     })
 }
 function drawOption(arr) {
+    startenable = false
     ctx.clearRect(0, 0, c.width, c.height)
-    console.log(arr)
-    if (!arr) return
-    arr.forEach(k => {
+    if (!arr){
+        startenable = true
+        return
+    }
+    arr.forEach((k,m) => {
         setTimeout(function(){
             ctx.beginPath()
             ctx.arc(k.posX, k.posY, 10, 0, 2 * Math.PI);
             ctx.fillStyle = k.color
             ctx.fill()
-        },1000/40)
-        
+            if(m == arr.length - 1){
+                startenable = true
+            }  
+        },1000/20)
+            
     })
 }
 getOptions()
