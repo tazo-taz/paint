@@ -1,0 +1,27 @@
+* {
+    margin: 0;
+    padding: 0;
+  }
+  canvas {
+    background: #ECF0F1;
+    margin: 0px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+  }
+  
+  #colorPick {
+      position: absolute;
+      z-index: 10;
+  }
+.operations {
+    position: absolute;
+}
+.onsave {
+    width: 10px;
+    /* overflow: hidden; */
+}
+select {
+    visibility: hidden;
+}
