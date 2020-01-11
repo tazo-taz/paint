@@ -7,6 +7,7 @@ var opened = false
 var deleteEnable = false
 var x = localStorage.getItem('canvasNames')
 var startenable = true
+toggle = true
 
 if (x) {
     canvasNames = JSON.parse(x)
@@ -45,8 +46,15 @@ $('.operations').width($('canvas').width())
 $('.save').click(function () {
     $('.onsave').html('<button class="btn btn-primary col-2 onok">OK</button><button class="btn btn-danger col-4 oncancel">Cancel</button><input type="text" class="col-6 form-control dataname">')
     $('.onsave').css('display', 'flex')
+	toggle = false
     $('.oncancel').click(function () {
+		toggle = true
+		if(opened){
+        $('.onsave').html('<button class="btn btn-danger clear col-3">delete</button>')
+        deleteEnable = true
+		}else{
         $('.onsave').html('<button class="btn btn-danger clear col-3">Clear</button>')
+		}
         activateClearClick()
         getOptions()
     })
@@ -60,6 +68,7 @@ $('.save').click(function () {
 
 })
 $('.open').click(function () {
+	if(!toggle)return
     if (opened) {
         $('select').css('visibility', 'hidden')
         $(this).text('Open')
@@ -87,9 +96,9 @@ function activateClearClick() {
                 getOptions()
                 ctx.clearRect(0, 0, c.width, c.height)
             }
-            return
-        }
-        ctx.clearRect(0, 0, c.width, c.height)
+        }else{
+        	ctx.clearRect(0, 0, c.width, c.height)
+	}
         data['datas'] = []
     })
 }
@@ -111,6 +120,8 @@ function getOptions() {
         if(!startenable)return
         arr = JSON.parse(localStorage.getItem($(this).val()))
         drawOption(arr)
+	data['datas']=arr
+
     })
 }
 function drawOption(arr) {
